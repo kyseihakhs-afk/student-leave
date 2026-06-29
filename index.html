@@ -1,95 +1,100 @@
 <!doctype html>
-
-<html
-  lang="en"
-  class="layout-menu-fixed layout-compact"
-  data-assets-path="../assets/"
-  data-template="vertical-menu-template-free">
+<html lang="en" class="layout-menu-fixed layout-compact" data-assets-path="../assets/" data-template="vertical-menu-template-free">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-
-    <title>Demo: Dashboard - Analytics | Sneat - Bootstrap Dashboard FREE</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>គ្រប់គ្រងសិស្ស | Student Management</title>
     <meta name="description" content="" />
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
-
-    <!-- Fonts -->
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-      rel="stylesheet" />
-
-    <link rel="stylesheet" href="../assets/vendor/fonts/iconify-icons.css" />
-
-    <!-- Core CSS -->
-    <!-- build:css assets/vendor/css/theme.css  -->
-
-    <link rel="stylesheet" href="../assets/vendor/css/core.css" />
-    <link rel="stylesheet" href="../assets/css/demo.css" />
-
-    <!-- Vendors CSS -->
-
-    <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
-
-    <!-- endbuild -->
-
-    <link rel="stylesheet" href="../assets/vendor/libs/apex-charts/apex-charts.css" />
-
-    <!-- Page CSS -->
-
-    <!-- Helpers -->
-    <script src="../assets/vendor/js/helpers.js"></script>
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-
-    <script src="../assets/js/config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/vendor/fonts/iconify-icons.css" />
+    <link rel="stylesheet" href="assets/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="assets/css/demo.css" />
+    <link rel="stylesheet" href="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <script src="assets/vendor/js/helpers.js"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+      .student-form-card { border-radius: 12px; }
+      .table th { background-color: #f5f5f9; font-weight: 600; }
+      .badge-active { background-color: #28a745; }
+      .action-btn { cursor: pointer; border: none; background: none; padding: 4px 8px; border-radius: 6px; }
+      .btn-edit { color: #696cff; }
+      .btn-delete { color: #ff3e1d; }
+      .btn-edit:hover { background: #e8e8ff; }
+      .btn-delete:hover { background: #ffe8e4; }
+      .modal-overlay {
+        display: none; position: fixed; top: 0; left: 0;
+        width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+        z-index: 9999; justify-content: center; align-items: center;
+      }
+      .modal-overlay.active { display: flex; }
+      .modal-box {
+        background: #fff; border-radius: 12px; padding: 30px;
+        width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      }
+      .modal-header-custom { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+      .close-modal { cursor: pointer; font-size: 24px; color: #888; border: none; background: none; }
+      .close-modal:hover { color: #333; }
+      .toast-msg {
+        position: fixed; bottom: 30px; right: 30px;
+        background: #28a745; color: #fff; padding: 14px 24px;
+        border-radius: 10px; font-size: 15px; z-index: 99999;
+        display: none; box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      }
+      .toast-msg.error { background: #ff3e1d; }
+      .toast-msg.show { display: block; animation: fadeIn 0.3s ease; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .stat-card { border-radius: 12px; padding: 20px; color: #fff; }
+      .stat-card.blue { background: linear-gradient(135deg, #696cff, #9b9ef9); }
+      .stat-card.green { background: linear-gradient(135deg, #28a745, #5ed87a); }
+      .stat-card.orange { background: linear-gradient(135deg, #fd7e14, #fdb96a); }
+      .stat-card.red { background: linear-gradient(135deg, #ff3e1d, #ff9a8a); }
+      .stat-number { font-size: 2rem; font-weight: 700; }
+      .stat-label { font-size: 0.85rem; opacity: 0.85; }
+      .empty-state { text-align: center; padding: 60px 20px; color: #aaa; }
+      .empty-state i { font-size: 48px; margin-bottom: 16px; display: block; }
+      .confirm-overlay {
+        display: none; position: fixed; top: 0; left: 0;
+        width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+        z-index: 99998; justify-content: center; align-items: center;
+      }
+      .confirm-overlay.active { display: flex; }
+      .confirm-box {
+        background: #fff; border-radius: 12px; padding: 30px;
+        width: 90%; max-width: 400px; text-align: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      }
+    </style>
   </head>
 
   <body>
-    <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
-        <!-- Menu -->
 
+        <!-- Sidebar -->
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
             <a href="index.html" class="app-brand-link">
               <span class="app-brand-logo demo">
                 <span class="text-primary">
-                  <svg
-                    width="25"
-                    viewBox="0 0 25 42"
-                    version="1.1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <defs>
-                      <path
-                        d="M13.7918663,0.358365126 L3.39788168,7.44174259 C0.566865006,9.69408886 -0.379795268,12.4788597 0.557900856,15.7960551 C0.68998853,16.2305145 1.09562888,17.7872135 3.12357076,19.2293357 C3.8146334,19.7207684 5.32369333,20.3834223 7.65075054,21.2172976 L7.59773219,21.2525164 L2.63468769,24.5493413 C0.445452254,26.3002124 0.0884951797,28.5083815 1.56381646,31.1738486 C2.83770406,32.8170431 5.20850219,33.2640127 7.09180128,32.5391577 C8.347334,32.0559211 11.4559176,30.0011079 16.4175519,26.3747182 C18.0338572,24.4997857 18.6973423,22.4544883 18.4080071,20.2388261 C17.963753,17.5346866 16.1776345,15.5799961 13.0496516,14.3747546 L10.9194936,13.4715819 L18.6192054,7.984237 L13.7918663,0.358365126 Z"
-                        id="path-1"></path>
-                      <path
-                        d="M5.47320593,6.00457225 C4.05321814,8.216144 4.36334763,10.0722806 6.40359441,11.5729822 C8.61520715,12.571656 10.0999176,13.2171421 10.8577257,13.5094407 L15.5088241,14.433041 L18.6192054,7.984237 C15.5364148,3.11535317 13.9273018,0.573395879 13.7918663,0.358365126 C13.5790555,0.511491653 10.8061687,2.3935607 5.47320593,6.00457225 Z"
-                        id="path-3"></path>
-                      <path
-                        d="M7.50063644,21.2294429 L12.3234468,23.3159332 C14.1688022,24.7579751 14.397098,26.4880487 13.008334,28.506154 C11.6195701,30.5242593 10.3099883,31.790241 9.07958868,32.3040991 C5.78142938,33.4346997 4.13234973,34 4.13234973,34 C4.13234973,34 2.75489982,33.0538207 2.37032616e-14,31.1614621 C-0.55822714,27.8186216 -0.55822714,26.0572515 -4.05231404e-15,25.8773518 C0.83734071,25.6075023 2.77988457,22.8248993 3.3049379,22.52991 C3.65497346,22.3332504 5.05353963,21.8997614 7.50063644,21.2294429 Z"
-                        id="path-4"></path>
-                      <path
-                        d="M20.6,7.13333333 L25.6,13.8 C26.2627417,14.6836556 26.0836556,15.9372583 25.2,16.6 C24.8538077,16.8596443 24.4327404,17 24,17 L14,17 C12.8954305,17 12,16.1045695 12,15 C12,14.5672596 12.1403557,14.1461923 12.4,13.8 L17.4,7.13333333 C18.0627417,6.24967773 19.3163444,6.07059163 20.2,6.73333333 C20.3516113,6.84704183 20.4862915,6.981722 20.6,7.13333333 Z"
-                        id="path-5"></path>
+                      <path d="M13.7918663,0.358365126 L3.39788168,7.44174259 C0.566865006,9.69408886 -0.379795268,12.4788597 0.557900856,15.7960551 C0.68998853,16.2305145 1.09562888,17.7872135 3.12357076,19.2293357 C3.8146334,19.7207684 5.32369333,20.3834223 7.65075054,21.2172976 L7.59773219,21.2525164 L2.63468769,24.5493413 C0.445452254,26.3002124 0.0884951797,28.5083815 1.56381646,31.1738486 C2.83770406,32.8170431 5.20850219,33.2640127 7.09180128,32.5391577 C8.347334,32.0559211 11.4559176,30.0011079 16.4175519,26.3747182 C18.0338572,24.4997857 18.6973423,22.4544883 18.4080071,20.2388261 C17.963753,17.5346866 16.1776345,15.5799961 13.0496516,14.3747546 L10.9194936,13.4715819 L18.6192054,7.984237 L13.7918663,0.358365126 Z" id="path-1"></path>
+                      <path d="M5.47320593,6.00457225 C4.05321814,8.216144 4.36334763,10.0722806 6.40359441,11.5729822 C8.61520715,12.571656 10.0999176,13.2171421 10.8577257,13.5094407 L15.5088241,14.433041 L18.6192054,7.984237 C15.5364148,3.11535317 13.9273018,0.573395879 13.7918663,0.358365126 C13.5790555,0.511491653 10.8061687,2.3935607 5.47320593,6.00457225 Z" id="path-3"></path>
+                      <path d="M7.50063644,21.2294429 L12.3234468,23.3159332 C14.1688022,24.7579751 14.397098,26.4880487 13.008334,28.506154 C11.6195701,30.5242593 10.3099883,31.790241 9.07958868,32.3040991 C5.78142938,33.4346997 4.13234973,34 4.13234973,34 C4.13234973,34 2.75489982,33.0538207 2.37032616e-14,31.1614621 C-0.55822714,27.8186216 -0.55822714,26.0572515 -4.05231404e-15,25.8773518 C0.83734071,25.6075023 2.77988457,22.8248993 3.3049379,22.52991 C3.65497346,22.3332504 5.05353963,21.8997614 7.50063644,21.2294429 Z" id="path-4"></path>
+                      <path d="M20.6,7.13333333 L25.6,13.8 C26.2627417,14.6836556 26.0836556,15.9372583 25.2,16.6 C24.8538077,16.8596443 24.4327404,17 24,17 L14,17 C12.8954305,17 12,16.1045695 12,15 C12,14.5672596 12.1403557,14.1461923 12.4,13.8 L17.4,7.13333333 C18.0627417,6.24967773 19.3163444,6.07059163 20.2,6.73333333 C20.3516113,6.84704183 20.4862915,6.981722 20.6,7.13333333 Z" id="path-5"></path>
                     </defs>
                     <g id="g-app-brand" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                       <g id="Brand-Logo" transform="translate(-27.000000, -15.000000)">
                         <g id="Icon" transform="translate(27.000000, 15.000000)">
                           <g id="Mask" transform="translate(0.000000, 8.000000)">
-                            <mask id="mask-2" fill="white">
-                              <use xlink:href="#path-1"></use>
-                            </mask>
+                            <mask id="mask-2" fill="white"><use xlink:href="#path-1"></use></mask>
                             <use fill="currentColor" xlink:href="#path-1"></use>
                             <g id="Path-3" mask="url(#mask-2)">
                               <use fill="currentColor" xlink:href="#path-3"></use>
@@ -100,9 +105,7 @@
                               <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-4"></use>
                             </g>
                           </g>
-                          <g
-                            id="Triangle"
-                            transform="translate(19.000000, 11.000000) rotate(-300.000000) translate(-19.000000, -11.000000) ">
+                          <g id="Triangle" transform="translate(19.000000, 11.000000) rotate(-300.000000) translate(-19.000000, -11.000000)">
                             <use fill="currentColor" xlink:href="#path-5"></use>
                             <use fill-opacity="0.2" fill="#FFFFFF" xlink:href="#path-5"></use>
                           </g>
@@ -112,1267 +115,741 @@
                   </svg>
                 </span>
               </span>
-              <span class="app-brand-text demo menu-text fw-bold ms-2">Sneat</span>
+              <span class="app-brand-text demo menu-text fw-bold ms-2">សិស្ស</span>
             </a>
-
-            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
-              <i class="bx bx-chevron-left d-block d-xl-none align-middle"></i>
+            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+              <i class="bx bx-chevron-left bx-sm align-middle"></i>
             </a>
           </div>
-
           <div class="menu-divider mt-0"></div>
-
           <div class="menu-inner-shadow"></div>
-
           <ul class="menu-inner py-1">
-            <!-- Dashboards -->
             <li class="menu-item active open">
               <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-home-smile"></i>
-                <div class="text-truncate" data-i18n="Dashboards">Dashboards</div>
-                <span class="badge rounded-pill bg-danger ms-auto">5</span>
+                <div class="text-truncate">គ្រប់គ្រងសិស្ស</div>
               </a>
               <ul class="menu-sub">
                 <li class="menu-item active">
                   <a href="index.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Analytics">Analytics</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a
-                    href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/dashboards-crm.html"
-                    target="_blank"
-                    class="menu-link">
-                    <div class="text-truncate" data-i18n="CRM">CRM</div>
-                    <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a
-                    href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-ecommerce-dashboard.html"
-                    target="_blank"
-                    class="menu-link">
-                    <div class="text-truncate" data-i18n="eCommerce">eCommerce</div>
-                    <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a
-                    href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-logistics-dashboard.html"
-                    target="_blank"
-                    class="menu-link">
-                    <div class="text-truncate" data-i18n="Logistics">Logistics</div>
-                    <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a
-                    href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-academy-dashboard.html"
-                    target="_blank"
-                    class="menu-link">
-                    <div class="text-truncate" data-i18n="Academy">Academy</div>
-                    <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
+                    <div class="text-truncate">បញ្ជីឈ្មោះសិស្ស</div>
                   </a>
                 </li>
               </ul>
-            </li>
-
-            <!-- Layouts -->
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-layout"></i>
-                <div class="text-truncate" data-i18n="Layouts">Layouts</div>
-              </a>
-
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="layouts-without-menu.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without menu">Without menu</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="layouts-without-navbar.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Without navbar">Without navbar</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="layouts-fluid.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Fluid">Fluid</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="layouts-container.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Container">Container</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="layouts-blank.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Blank">Blank</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <!-- Front Pages -->
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-store"></i>
-                <div class="text-truncate" data-i18n="Front Pages">Front Pages</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a
-                    href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/landing-page.html"
-                    class="menu-link"
-                    target="_blank">
-                    <div class="text-truncate" data-i18n="Landing">Landing</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a
-                    href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/pricing-page.html"
-                    class="menu-link"
-                    target="_blank">
-                    <div class="text-truncate" data-i18n="Pricing">Pricing</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a
-                    href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/payment-page.html"
-                    class="menu-link"
-                    target="_blank">
-                    <div class="text-truncate" data-i18n="Payment">Payment</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a
-                    href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/checkout-page.html"
-                    class="menu-link"
-                    target="_blank">
-                    <div class="text-truncate" data-i18n="Checkout">Checkout</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a
-                    href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/front-pages/help-center-landing.html"
-                    class="menu-link"
-                    target="_blank">
-                    <div class="text-truncate" data-i18n="Help Center">Help Center</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <!-- Apps & Pages -->
-            <li class="menu-header small text-uppercase">
-              <span class="menu-header-text">Apps &amp; Pages</span>
-            </li>
-            <li class="menu-item">
-              <a
-                href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-email.html"
-                target="_blank"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-envelope"></i>
-                <div class="text-truncate" data-i18n="Email">Email</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a
-                href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-chat.html"
-                target="_blank"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-chat"></i>
-                <div class="text-truncate" data-i18n="Chat">Chat</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a
-                href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-calendar.html"
-                target="_blank"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-calendar"></i>
-                <div class="text-truncate" data-i18n="Calendar">Calendar</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a
-                href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/app-kanban.html"
-                target="_blank"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-grid"></i>
-                <div class="text-truncate" data-i18n="Kanban">Kanban</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-              </a>
-            </li>
-            <!-- Pages -->
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                <div class="text-truncate" data-i18n="Account Settings">Account Settings</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="pages-account-settings-account.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Account">Account</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="pages-account-settings-notifications.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Notifications">Notifications</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="pages-account-settings-connections.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Connections">Connections</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-                <div class="text-truncate" data-i18n="Authentications">Authentications</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="auth-login-basic.html" class="menu-link" target="_blank">
-                    <div class="text-truncate" data-i18n="Basic">Login</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="auth-register-basic.html" class="menu-link" target="_blank">
-                    <div class="text-truncate" data-i18n="Basic">Register</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="auth-forgot-password-basic.html" class="menu-link" target="_blank">
-                    <div class="text-truncate" data-i18n="Basic">Forgot Password</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                <div class="text-truncate" data-i18n="Misc">Misc</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="pages-misc-error.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Error">Error</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="pages-misc-under-maintenance.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Under Maintenance">Under Maintenance</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <!-- Components -->
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">Components</span></li>
-            <!-- Cards -->
-            <li class="menu-item">
-              <a href="cards-basic.html" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div class="text-truncate" data-i18n="Basic">Cards</div>
-              </a>
-            </li>
-            <!-- User interface -->
-            <li class="menu-item">
-              <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-box"></i>
-                <div class="text-truncate" data-i18n="User interface">User interface</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="ui-accordion.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Accordion">Accordion</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-alerts.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Alerts">Alerts</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-badges.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Badges">Badges</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-buttons.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Buttons">Buttons</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-carousel.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Carousel">Carousel</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-collapse.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Collapse">Collapse</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-dropdowns.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Dropdowns">Dropdowns</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-footer.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Footer">Footer</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-list-groups.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="List Groups">List groups</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-modals.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Modals">Modals</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-navbar.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Navbar">Navbar</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-offcanvas.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Offcanvas">Offcanvas</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-pagination-breadcrumbs.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Pagination & Breadcrumbs">Pagination &amp; Breadcrumbs</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-progress.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Progress">Progress</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-spinners.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Spinners">Spinners</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-tabs-pills.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Tabs & Pills">Tabs &amp; Pills</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-toasts.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Toasts">Toasts</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-tooltips-popovers.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Tooltips & Popovers">Tooltips &amp; Popovers</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-typography.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Typography">Typography</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <!-- Extended components -->
-            <li class="menu-item">
-              <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-copy"></i>
-                <div class="text-truncate" data-i18n="Extended UI">Extended UI</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Perfect Scrollbar">Perfect Scrollbar</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="extended-ui-text-divider.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Text Divider">Text Divider</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <li class="menu-item">
-              <a href="icons-boxicons.html" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-crown"></i>
-                <div class="text-truncate" data-i18n="Boxicons">Boxicons</div>
-              </a>
-            </li>
-
-            <!-- Forms & Tables -->
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">Forms &amp; Tables</span></li>
-            <!-- Forms -->
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-detail"></i>
-                <div class="text-truncate" data-i18n="Form Elements">Form Elements</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="forms-basic-inputs.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Basic Inputs">Basic Inputs</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="forms-input-groups.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Input groups">Input groups</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-detail"></i>
-                <div class="text-truncate" data-i18n="Form Layouts">Form Layouts</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="form-layouts-vertical.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Vertical Form">Vertical Form</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="form-layouts-horizontal.html" class="menu-link">
-                    <div class="text-truncate" data-i18n="Horizontal Form">Horizontal Form</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <!-- Form Validation -->
-            <li class="menu-item">
-              <a
-                href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/form-validation.html"
-                target="_blank"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-list-check"></i>
-                <div class="text-truncate" data-i18n="Form Validation">Form Validation</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-              </a>
-            </li>
-            <!-- Tables -->
-            <li class="menu-item">
-              <a href="tables-basic.html" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-table"></i>
-                <div class="text-truncate" data-i18n="Tables">Tables</div>
-              </a>
-            </li>
-            <!-- Data Tables -->
-            <li class="menu-item">
-              <a
-                href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/html/vertical-menu-template/tables-datatables-basic.html"
-                target="_blank"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-grid"></i>
-                <div class="text-truncate" data-i18n="Datatables">Datatables</div>
-                <div class="badge rounded-pill bg-label-primary text-uppercase fs-tiny ms-auto">Pro</div>
-              </a>
-            </li>
-            <!-- Misc -->
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
-            <li class="menu-item">
-              <a
-                href="https://github.com/themeselection/sneat-bootstrap-html-admin-template-free/issues"
-                target="_blank"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-support"></i>
-                <div class="text-truncate" data-i18n="Support">Support</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a
-                href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation/"
-                target="_blank"
-                class="menu-link">
-                <i class="menu-icon tf-icons bx bx-file"></i>
-                <div class="text-truncate" data-i18n="Documentation">Documentation</div>
-              </a>
             </li>
           </ul>
         </aside>
-        <!-- / Menu -->
 
-        <!-- Layout container -->
+        <!-- Main Content -->
         <div class="layout-page">
-          <!-- Navbar -->
-
-          <nav
-            class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme"
-            id="layout-navbar">
+          <nav class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
             <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
               <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
-                <i class="icon-base bx bx-menu icon-md"></i>
+                <i class="bx bx-menu icon-md"></i>
               </a>
             </div>
-
             <div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
-              <!-- Search -->
               <div class="navbar-nav align-items-center me-auto">
                 <div class="nav-item d-flex align-items-center">
-                  <span class="w-px-22 h-px-22"><i class="icon-base bx bx-search icon-md"></i></span>
-                  <input
-                    type="text"
-                    class="form-control border-0 shadow-none ps-1 ps-sm-2 d-md-block d-none"
-                    placeholder="ស្វែងរក..."
-                    aria-label="ស្វែងរក..." />
+                  <span class="w-px-22 h-px-22"><i class="bx bx-search icon-md"></i></span>
+                  <input type="text" id="globalSearch" class="form-control border-0 shadow-none ps-1 ps-sm-2 d-md-block d-none" placeholder="ស្វែងរកសិស្ស..." />
                 </div>
               </div>
-              <!-- /Search -->
-
               <ul class="navbar-nav flex-row align-items-center ms-md-auto">
-                <!-- Place this tag where you want the button to render. -->
-                <li class="nav-item lh-1 me-4">
-                  <a
-                    class="github-button"
-                    href="https://github.com/themeselection/sneat-bootstrap-html-admin-template-free"
-                    data-icon="octicon-star"
-                    data-size="large"
-                    data-show-count="true"
-                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
-                    >Star</a
-                  >
-                </li>
-
-                <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                  <a
-                    class="nav-link dropdown-toggle hide-arrow p-0"
-                    href="javascript:void(0);"
-                    data-bs-toggle="dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                      <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                      <img src="assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                      <a class="dropdown-item" href="#">
+                      <a class="dropdown-menu-item" href="#">
                         <div class="d-flex">
                           <div class="flex-shrink-0 me-3">
                             <div class="avatar avatar-online">
-                              <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                              <img src="assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
                             </div>
                           </div>
                           <div class="flex-grow-1">
-                            <h6 class="mb-0">John Doe</h6>
-                            <small class="text-body-secondary">Admin</small>
+                            <h6 class="mb-0">Admin</h6>
+                            <small class="text-muted">Administrator</small>
                           </div>
                         </div>
-                      </a>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider my-1"></div>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">
-                        <i class="icon-base bx bx-user icon-md me-3"></i><span>My Profile</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">
-                        <i class="icon-base bx bx-cog icon-md me-3"></i><span>Settings</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">
-                        <span class="d-flex align-items-center align-middle">
-                          <i class="flex-shrink-0 icon-base bx bx-credit-card icon-md me-3"></i
-                          ><span class="flex-grow-1 align-middle">Billing Plan</span>
-                          <span class="flex-shrink-0 badge rounded-pill bg-danger">4</span>
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider my-1"></div>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="javascript:void(0);">
-                        <i class="icon-base bx bx-power-off icon-md me-3"></i><span>Log Out</span>
                       </a>
                     </li>
                   </ul>
                 </li>
-                <!--/ User -->
               </ul>
             </div>
           </nav>
 
-          <!-- / Navbar -->
-
-          <!-- Content wrapper -->
           <div class="content-wrapper">
-            <!-- Content -->
             <div class="container-xxl flex-grow-1 container-p-y">
-              <div class="row">
-                <div class="col-xxl-8 mb-6 order-0">
-                  <div class="card">
-                    <div class="d-flex align-items-start row">
-                      <div class="col-sm-7">
-                        <div class="card-body">
-                          <h5 class="card-title text-primary mb-3">Congratulations សីហាក់! 🎉</h5>
-                          <p class="mb-4">
-                            អ្នកសម្រេចបានការលក់កើនឡើង 72% ថ្ងៃនេះ។ សូមពិនិត្យមើលមេដាយថ្មីនៅក្នុងប្រវត្តិរូបរបស់អ្នក។
-                          </p>
+              <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <h4 class="fw-bold mb-0">គ្រប់គ្រងសិស្ស</h4>
+                <div class="d-flex gap-2 flex-wrap">
+                  <button class="btn btn-outline-success" onclick="document.getElementById('importFile').click()">
+                    <i class="bx bx-upload me-1"></i> Import Excel/CSV
+                  </button>
+                  <input type="file" id="importFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImport(event)" />
+                  <button class="btn btn-outline-secondary" onclick="downloadTemplate()">
+                    <i class="bx bx-download me-1"></i> Download Template
+                  </button>
+                  <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="bx bx-plus me-1"></i> បន្ថែមសិស្សថ្មី
+                  </button>
+                </div>
+              </div>
 
-                          <a href="javascript:;" class="btn btn-sm btn-outline-primary">ពិនិត្យមើលពិន្ទុ</a>
-                        </div>
-                      </div>
-                      <div class="col-sm-5 text-center text-sm-left">
-                        <div class="card-body pb-0 px-0 px-md-6">
-                          <img src="../assets/img/illustrations/hun-logo.png" height="175" alt="View Badge User" />
-                        </div>
-                      </div>
-                    </div>
+              <!-- Stats -->
+              <div class="row mb-4 g-3">
+                <div class="col-6 col-md-3">
+                  <div class="stat-card blue">
+                    <div class="stat-number" id="statTotal">0</div>
+                    <div class="stat-label">សិស្សទាំងអស់</div>
                   </div>
                 </div>
-                <div class="col-xxl-4 col-lg-12 col-md-4 order-1">
-                  <div class="row">
-                    <div class="col-lg-6 col-md-12 col-6 mb-6">
-                      <div class="card h-100">
-                        <div class="card-body">
-                          <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                            <div class="avatar flex-shrink-0">
-                              <img
-                                src="../assets/img/illustrations/my-daugther.jpg"
-                                alt="my-daugther"
-                                class="rounded" />
-                            </div>
-                            <div class="dropdown">
-                              <button
-                                class="btn p-0"
-                                type="button"
-                                id="cardOpt3"
-                                data-bs-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false">
-                                <i class="icon-base bx bx-dots-vertical-rounded text-body-secondary"></i>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                              </div>
-                            </div>
-                          </div>
-                          <p class="mb-1">Profit</p>
-                          <h4 class="card-title mb-3">$12,628</h4>
-                          <small class="text-success fw-medium"
-                            ><i class="icon-base bx bx-up-arrow-alt"></i> +72.80%</small
-                          >
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-lg-6 col-md-12 col-6 mb-6">
-                      <div class="card h-100">
-                        <div class="card-body">
-                          <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                            <div class="avatar flex-shrink-0">
-                              <img
-                                src="../assets/img/icons/unicons/wallet-info.png"
-                                alt="wallet info"
-                                class="rounded" />
-                            </div>
-                            <div class="dropdown">
-                              <button
-                                class="btn p-0"
-                                type="button"
-                                id="cardOpt6"
-                                data-bs-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false">
-                                <i class="icon-base bx bx-dots-vertical-rounded text-body-secondary"></i>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
-                                <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                              </div>
-                            </div>
-                          </div>
-                          <p class="mb-1">Sales</p>
-                          <h4 class="card-title mb-3">$4,679</h4>
-                          <small class="text-success fw-medium"
-                            ><i class="icon-base bx bx-up-arrow-alt"></i> +28.42%</small
-                          >
-                        </div>
-                      </div>
-                    </div>
+                <div class="col-6 col-md-3">
+                  <div class="stat-card green">
+                    <div class="stat-number" id="statActive">0</div>
+                    <div class="stat-label">សកម្ម</div>
                   </div>
                 </div>
-                <!-- Total Revenue -->
-                <div class="col-12 col-xxl-8 order-2 order-md-3 order-xxl-2 mb-6 total-revenue">
-                  <div class="card">
-                    <div class="row row-bordered g-0">
-                      <div class="col-lg-8">
-                        <div class="card-header d-flex align-items-center justify-content-between">
-                          <div class="card-title mb-0">
-                            <h5 class="m-0 me-2">Total Revenue</h5>
-                          </div>
-                          <div class="dropdown">
-                            <button
-                              class="btn p-0"
-                              type="button"
-                              id="totalRevenue"
-                              data-bs-toggle="dropdown"
-                              aria-haspopup="true"
-                              aria-expanded="false">
-                              <i class="icon-base bx bx-dots-vertical-rounded icon-lg text-body-secondary"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="totalRevenue">
-                              <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-                              <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                              <a class="dropdown-item" href="javascript:void(0);">Share</a>
-                            </div>
-                          </div>
-                        </div>
-                        <div id="totalRevenueChart" class="px-3"></div>
-                      </div>
-                      <div class="col-lg-4">
-                        <div class="card-body px-xl-9 py-12 d-flex align-items-center flex-column">
-                          <div class="text-center mb-6">
-                            <div class="btn-group">
-                              <button type="button" class="btn btn-outline-primary">
-                                <script>
-                                  document.write(new Date().getFullYear() - 1);
-                                </script>
-                              </button>
-                              <button
-                                type="button"
-                                class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                <span class="visually-hidden">Toggle Dropdown</span>
-                              </button>
-                              <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="javascript:void(0);">2021</a></li>
-                                <li><a class="dropdown-item" href="javascript:void(0);">2020</a></li>
-                                <li><a class="dropdown-item" href="javascript:void(0);">2019</a></li>
-                              </ul>
-                            </div>
-                          </div>
-
-                          <div id="growthChart"></div>
-                          <div class="text-center fw-medium my-6">62% Company Growth</div>
-
-                          <div class="d-flex gap-11 justify-content-between">
-                            <div class="d-flex">
-                              <div class="avatar me-2">
-                                <span class="avatar-initial rounded-2 bg-label-primary"
-                                  ><i class="icon-base bx bx-dollar icon-lg text-primary"></i
-                                ></span>
-                              </div>
-                              <div class="d-flex flex-column">
-                                <small>
-                                  <script>
-                                    document.write(new Date().getFullYear() - 1);
-                                  </script>
-                                </small>
-                                <h6 class="mb-0">$32.5k</h6>
-                              </div>
-                            </div>
-                            <div class="d-flex">
-                              <div class="avatar me-2">
-                                <span class="avatar-initial rounded-2 bg-label-info"
-                                  ><i class="icon-base bx bx-wallet icon-lg text-info"></i
-                                ></span>
-                              </div>
-                              <div class="d-flex flex-column">
-                                <small>
-                                  <script>
-                                    document.write(new Date().getFullYear() - 2);
-                                  </script>
-                                </small>
-                                <h6 class="mb-0">$41.2k</h6>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                <div class="col-6 col-md-3">
+                  <div class="stat-card orange">
+                    <div class="stat-number" id="statMale">0</div>
+                    <div class="stat-label">ប្រុស</div>
                   </div>
                 </div>
-                <!--/ Total Revenue -->
-                <div class="col-12 col-md-8 col-lg-12 col-xxl-4 order-3 order-md-2 profile-report">
-                  <div class="row">
-                    <div class="col-6 mb-6 payments">
-                      <div class="card h-100">
-                        <div class="card-body">
-                          <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                            <div class="avatar flex-shrink-0">
-                              <img src="../assets/img/illustrations/My-Logo.png" alt="My-Logo" class="rounded" />
-                            </div>
-                            <div class="dropdown">
-                              <button
-                                class="btn p-0"
-                                type="button"
-                                id="cardOpt4"
-                                data-bs-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false">
-                                <i class="icon-base bx bx-dots-vertical-rounded text-body-secondary"></i>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt4">
-                                <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                              </div>
-                            </div>
-                          </div>
-                          <p class="mb-1">Payments</p>
-                          <h4 class="card-title mb-3">$2,456</h4>
-                          <small class="text-danger fw-medium"
-                            ><i class="icon-base bx bx-down-arrow-alt"></i> -14.82%</small
-                          >
-                        </div>
-                      </div>
+                <div class="col-6 col-md-3">
+                  <div class="stat-card red">
+                    <div class="stat-number" id="statFemale">0</div>
+                    <div class="stat-label">ស្រី</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Filter & Search -->
+              <div class="card mb-4">
+                <div class="card-body">
+                  <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                      <label class="form-label">ស្វែងរក</label>
+                      <input type="text" id="searchStudent" class="form-control" placeholder="ឈ្មោះ ឬ លេខទូរស័ព្ទ..." oninput="renderTable()" />
                     </div>
-                    <div class="col-6 mb-6 transactions">
-                      <div class="card h-100">
-                        <div class="card-body">
-                          <div class="card-title d-flex align-items-start justify-content-between mb-4">
-                            <div class="avatar flex-shrink-0">
-                              <img src="../assets/img/icons/unicons/cc-primary.png" alt="Credit Card" class="rounded" />
-                            </div>
-                            <div class="dropdown">
-                              <button
-                                class="btn p-0"
-                                type="button"
-                                id="cardOpt1"
-                                data-bs-toggle="dropdown"
-                                aria-haspopup="true"
-                                aria-expanded="false">
-                                <i class="icon-base bx bx-dots-vertical-rounded text-body-secondary"></i>
-                              </button>
-                              <div class="dropdown-menu" aria-labelledby="cardOpt1">
-                                <a class="dropdown-item" href="javascript:void(0);">View More</a>
-                                <a class="dropdown-item" href="javascript:void(0);">Delete</a>
-                              </div>
-                            </div>
-                          </div>
-                          <p class="mb-1">Transactions</p>
-                          <h4 class="card-title mb-3">$14,857</h4>
-                          <small class="text-success fw-medium"
-                            ><i class="icon-base bx bx-up-arrow-alt"></i> +28.14%</small
-                          >
-                        </div>
-                      </div>
+                    <div class="col-md-2">
+                      <label class="form-label">ថ្នាក់ទី</label>
+                      <select id="filterGrade" class="form-select" onchange="renderTable()">
+                        <option value="">ទាំងអស់</option>
+                        <option value="7">ថ្នាក់ទី 7</option>
+                        <option value="8">ថ្នាក់ទី 8</option>
+                        <option value="9">ថ្នាក់ទី 9</option>
+                        <option value="10">ថ្នាក់ទី 10</option>
+                        <option value="11">ថ្នាក់ទី 11</option>
+                        <option value="12">ថ្នាក់ទី 12</option>
+                      </select>
                     </div>
-                    <div class="col-12 mb-6 profile-report">
-                      <div class="card h-100">
-                        <div class="card-body">
-                          <div
-                            class="d-flex justify-content-between align-items-center flex-sm-row flex-column gap-10 flex-wrap">
-                            <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between">
-                              <div class="card-title mb-6">
-                                <h5 class="text-nowrap mb-1">Profile Report</h5>
-                                <span class="badge bg-label-warning">YEAR 2022</span>
-                              </div>
-                              <div class="mt-sm-auto">
-                                <span class="text-success text-nowrap fw-medium"
-                                  ><i class="icon-base bx bx-up-arrow-alt"></i> 68.2%</span
-                                >
-                                <h4 class="mb-0">$84,686k</h4>
-                              </div>
-                            </div>
-                            <div id="profileReportChart"></div>
-                          </div>
-                        </div>
-                      </div>
+                    <div class="col-md-2">
+                      <label class="form-label">ភេទ</label>
+                      <select id="filterGender" class="form-select" onchange="renderTable()">
+                        <option value="">ទាំងអស់</option>
+                        <option value="ប្រុស">ប្រុស</option>
+                        <option value="ស្រី">ស្រី</option>
+                      </select>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">ស្ថានភាព</label>
+                      <select id="filterStatus" class="form-select" onchange="renderTable()">
+                        <option value="">ទាំងអស់</option>
+                        <option value="សកម្ម">សកម្ម</option>
+                        <option value="ផ្ទេរចូលដើមឆ្នាំ">ផ្ទេរចូលដើមឆ្នាំ</option>
+                        <option value="ផ្ទេរចូលឆមាសទី១">ផ្ទេរចូលឆមាសទី១</option>
+                        <option value="ផ្ទេរចូលឆមាសទី២">ផ្ទេរចូលឆមាសទី២</option>
+                        <option value="ផ្ទេរចេញឆមាស១">ផ្ទេរចេញឆមាស១</option>
+                        <option value="ផ្ទេរចេញឆមាស២">ផ្ទេរចេញឆមាស២</option>
+                        <option value="លុបឈ្មោះឆមាស១">លុបឈ្មោះឆមាស១</option>
+                        <option value="លុបឈ្មោះឆមាស២">លុបឈ្មោះឆមាស២</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                        <i class="bx bx-reset me-1"></i> សម្អាត
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <!-- Order Statistics -->
-                <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-6">
-                  <div class="card h-100">
-                    <div class="card-header d-flex justify-content-between">
-                      <div class="card-title mb-0">
-                        <h5 class="mb-1 me-2">Order Statistics</h5>
-                        <p class="card-subtitle">42.82k Total Sales</p>
-                      </div>
-                      <div class="dropdown">
-                        <button
-                          class="btn text-body-secondary p-0"
-                          type="button"
-                          id="orederStatistics"
-                          data-bs-toggle="dropdown"
-                          aria-haspopup="true"
-                          aria-expanded="false">
-                          <i class="icon-base bx bx-dots-vertical-rounded icon-lg"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
-                          <a class="dropdown-item" href="javascript:void(0);">Select All</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Share</a>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card-body">
-                      <div class="d-flex justify-content-between align-items-center mb-6">
-                        <div class="d-flex flex-column align-items-center gap-1">
-                          <h3 class="mb-1">8,258</h3>
-                          <small>Total Orders</small>
-                        </div>
-                        <div id="orderStatisticsChart"></div>
-                      </div>
-                      <ul class="p-0 m-0">
-                        <li class="d-flex align-items-center mb-5">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <span class="avatar-initial rounded bg-label-primary"
-                              ><i class="icon-base bx bx-mobile-alt"></i
-                            ></span>
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <h6 class="mb-0">Electronic</h6>
-                              <small>Mobile, Earbuds, TV</small>
-                            </div>
-                            <div class="user-progress">
-                              <h6 class="mb-0">82.5k</h6>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="d-flex align-items-center mb-5">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <span class="avatar-initial rounded bg-label-success"
-                              ><i class="icon-base bx bx-closet"></i
-                            ></span>
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <h6 class="mb-0">Fashion</h6>
-                              <small>T-shirt, Jeans, Shoes</small>
-                            </div>
-                            <div class="user-progress">
-                              <h6 class="mb-0">23.8k</h6>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="d-flex align-items-center mb-5">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <span class="avatar-initial rounded bg-label-info"
-                              ><i class="icon-base bx bx-home-alt"></i
-                            ></span>
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <h6 class="mb-0">Decor</h6>
-                              <small>Fine Art, Dining</small>
-                            </div>
-                            <div class="user-progress">
-                              <h6 class="mb-0">849k</h6>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="d-flex align-items-center">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <span class="avatar-initial rounded bg-label-secondary"
-                              ><i class="icon-base bx bx-football"></i
-                            ></span>
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <h6 class="mb-0">Sports</h6>
-                              <small>Football, Cricket Kit</small>
-                            </div>
-                            <div class="user-progress">
-                              <h6 class="mb-0">99</h6>
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <!--/ Order Statistics -->
 
-                <!-- Expense Overview -->
-                <div class="col-md-6 col-lg-4 order-1 mb-6">
-                  <div class="card h-100">
-                    <div class="card-header nav-align-top">
-                      <ul class="nav nav-pills flex-wrap row-gap-2" role="tablist">
-                        <li class="nav-item">
-                          <button
-                            type="button"
-                            class="nav-link active"
-                            role="tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#navs-tabs-line-card-income"
-                            aria-controls="navs-tabs-line-card-income"
-                            aria-selected="true">
-                            Income
-                          </button>
-                        </li>
-                        <li class="nav-item">
-                          <button type="button" class="nav-link" role="tab">Expenses</button>
-                        </li>
-                        <li class="nav-item">
-                          <button type="button" class="nav-link" role="tab">Profit</button>
-                        </li>
-                      </ul>
-                    </div>
-                    <div class="card-body">
-                      <div class="tab-content p-0">
-                        <div class="tab-pane fade show active" id="navs-tabs-line-card-income" role="tabpanel">
-                          <div class="d-flex mb-6">
-                            <div class="avatar flex-shrink-0 me-3">
-                              <img src="../assets/img/icons/unicons/wallet.png" alt="User" />
-                            </div>
-                            <div>
-                              <p class="mb-0">Total Balance</p>
-                              <div class="d-flex align-items-center">
-                                <h6 class="mb-0 me-1">$459.10</h6>
-                                <small class="text-success fw-medium">
-                                  <i class="icon-base bx bx-chevron-up icon-lg"></i>
-                                  42.9%
-                                </small>
-                              </div>
-                            </div>
-                          </div>
-                          <div id="incomeChart"></div>
-                          <div class="d-flex align-items-center justify-content-center mt-6 gap-3">
-                            <div class="flex-shrink-0">
-                              <div id="expensesOfWeek"></div>
-                            </div>
-                            <div>
-                              <h6 class="mb-0">Income this week</h6>
-                              <small>$39k less than last week</small>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+              <!-- Table -->
+              <div class="card">
+                <h5 class="card-header">បញ្ជីឈ្មោះសិស្ស</h5>
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>ឈ្មោះពេញ</th>
+                          <th>ភេទ</th>
+                          <th>ថ្ងៃខែឆ្នាំកំណើត</th>
+                          <th>ថ្នាក់ទី</th>
+                          <th>បន្ទប់</th>
+                          <th>លេខទូរស័ព្ទ</th>
+                          <th>ស្ថានភាព</th>
+                          <th>គ្រូបន្ទុក</th>
+                          <th>អ្នកបញ្ចូល</th>
+                          <th>សកម្មភាព</th>
+                        </tr>
+                      </thead>
+                      <tbody id="studentTableBody">
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-                <!--/ Expense Overview -->
-
-                <!-- Transactions -->
-                <div class="col-md-6 col-lg-4 order-2 mb-6">
-                  <div class="card h-100">
-                    <div class="card-header d-flex align-items-center justify-content-between">
-                      <h5 class="card-title m-0 me-2">Transactions</h5>
-                      <div class="dropdown">
-                        <button
-                          class="btn text-body-secondary p-0"
-                          type="button"
-                          id="transactionID"
-                          data-bs-toggle="dropdown"
-                          aria-haspopup="true"
-                          aria-expanded="false">
-                          <i class="icon-base bx bx-dots-vertical-rounded icon-lg"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
-                          <a class="dropdown-item" href="javascript:void(0);">Last 28 Days</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Last Month</a>
-                          <a class="dropdown-item" href="javascript:void(0);">Last Year</a>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card-body pt-4">
-                      <ul class="p-0 m-0">
-                        <li class="d-flex align-items-center mb-6">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <img src="../assets/img/icons/unicons/paypal.png" alt="User" class="rounded" />
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <small class="d-block">Paypal</small>
-                              <h6 class="fw-normal mb-0">Send money</h6>
-                            </div>
-                            <div class="user-progress d-flex align-items-center gap-2">
-                              <h6 class="fw-normal mb-0">+82.6</h6>
-                              <span class="text-body-secondary">USD</span>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="d-flex align-items-center mb-6">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <img src="../assets/img/icons/unicons/wallet.png" alt="User" class="rounded" />
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <small class="d-block">Wallet</small>
-                              <h6 class="fw-normal mb-0">Mac'D</h6>
-                            </div>
-                            <div class="user-progress d-flex align-items-center gap-2">
-                              <h6 class="fw-normal mb-0">+270.69</h6>
-                              <span class="text-body-secondary">USD</span>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="d-flex align-items-center mb-6">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <img src="../assets/img/icons/unicons/chart.png" alt="User" class="rounded" />
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <small class="d-block">Transfer</small>
-                              <h6 class="fw-normal mb-0">Refund</h6>
-                            </div>
-                            <div class="user-progress d-flex align-items-center gap-2">
-                              <h6 class="fw-normal mb-0">+637.91</h6>
-                              <span class="text-body-secondary">USD</span>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="d-flex align-items-center mb-6">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <img src="../assets/img/icons/unicons/cc-primary.png" alt="User" class="rounded" />
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <small class="d-block">Credit Card</small>
-                              <h6 class="fw-normal mb-0">Ordered Food</h6>
-                            </div>
-                            <div class="user-progress d-flex align-items-center gap-2">
-                              <h6 class="fw-normal mb-0">-838.71</h6>
-                              <span class="text-body-secondary">USD</span>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="d-flex align-items-center mb-6">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <img src="../assets/img/icons/unicons/wallet.png" alt="User" class="rounded" />
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <small class="d-block">Wallet</small>
-                              <h6 class="fw-normal mb-0">Starbucks</h6>
-                            </div>
-                            <div class="user-progress d-flex align-items-center gap-2">
-                              <h6 class="fw-normal mb-0">+203.33</h6>
-                              <span class="text-body-secondary">USD</span>
-                            </div>
-                          </div>
-                        </li>
-                        <li class="d-flex align-items-center">
-                          <div class="avatar flex-shrink-0 me-3">
-                            <img src="../assets/img/icons/unicons/cc-warning.png" alt="User" class="rounded" />
-                          </div>
-                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                            <div class="me-2">
-                              <small class="d-block">Mastercard</small>
-                              <h6 class="fw-normal mb-0">Ordered Food</h6>
-                            </div>
-                            <div class="user-progress d-flex align-items-center gap-2">
-                              <h6 class="fw-normal mb-0">-92.45</h6>
-                              <span class="text-body-secondary">USD</span>
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <!--/ Transactions -->
               </div>
+
             </div>
-            <!-- / Content -->
 
-            <!-- Footer -->
             <footer class="content-footer footer bg-footer-theme">
               <div class="container-xxl">
-                <div
-                  class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-                  <div class="mb-2 mb-md-0">
-                    ©
-                    <script>
-                      document.write(new Date().getFullYear());
-                    </script>
-                    , made with ❤️ by
-                    <a href="https://themeselection.com" target="_blank" class="footer-link">ThemeSelection</a>
-                  </div>
-                  <div class="d-none d-lg-inline-block">
-                    <a
-                      href="https://themeselection.com/item/category/admin-templates/"
-                      target="_blank"
-                      class="footer-link me-4"
-                      >Admin Templates</a
-                    >
-
-                    <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-                    <a
-                      href="https://themeselection.com/item/category/bootstrap-admin-templates/"
-                      target="_blank"
-                      class="footer-link me-4"
-                      >Bootstrap Dashboard</a
-                    >
-
-                    <a
-                      href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation/"
-                      target="_blank"
-                      class="footer-link me-4"
-                      >Documentation</a
-                    >
-
-                    <a
-                      href="https://github.com/themeselection/sneat-bootstrap-html-admin-template-free/issues"
-                      target="_blank"
-                      class="footer-link"
-                      >Support</a
-                    >
-                  </div>
+                <div class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+                  <div class="text-body">© <script>document.write(new Date().getFullYear());</script>, គ្រប់គ្រងសិស្ស ❤️</div>
                 </div>
               </div>
             </footer>
-            <!-- / Footer -->
-
-            <div class="content-backdrop fade"></div>
           </div>
-          <!-- Content wrapper -->
         </div>
-        <!-- / Layout page -->
       </div>
-
-      <!-- Overlay -->
       <div class="layout-overlay layout-menu-toggle"></div>
     </div>
-    <!-- / Layout wrapper -->
 
-    <div class="buy-now">
-      <a
-        href="https://themeselection.com/item/sneat-dashboard-pro-bootstrap/"
-        target="_blank"
-        class="btn btn-danger btn-buy-now"
-        >Upgrade to Pro</a
-      >
+    <!-- Import Preview Modal -->
+    <div class="modal-overlay" id="importModal">
+      <div class="modal-box" style="max-width:900px">
+        <div class="modal-header-custom">
+          <h5 class="mb-0 fw-bold"><i class="bx bx-upload me-2 text-success"></i>មើលទិន្នន័យមុន Import</h5>
+          <button class="close-modal" onclick="closeImportModal()">✕</button>
+        </div>
+        <div id="importInfo" class="alert alert-info mb-3" style="display:none"></div>
+        <div id="importWarning" class="alert alert-warning mb-3" style="display:none"></div>
+
+        <!-- Column Mapping -->
+        <div id="mappingSection" class="mb-3">
+          <p class="fw-semibold mb-2">ផ្គូផ្គង Column ពី File ទៅ System:</p>
+          <div class="row g-2" id="mappingRows"></div>
+        </div>
+
+        <div class="table-responsive mb-3" style="max-height:300px; overflow-y:auto;">
+          <table class="table table-sm table-bordered" id="previewTable">
+            <thead id="previewHead"></thead>
+            <tbody id="previewBody"></tbody>
+          </table>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-success" onclick="confirmImport()">
+            <i class="bx bx-check me-1"></i> Import ចូលប្រព័ន្ធ
+          </button>
+          <button class="btn btn-outline-secondary" onclick="closeImportModal()">បោះបង់</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Core JS -->
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="studentModal">
+      <div class="modal-box">
+        <div class="modal-header-custom">
+          <h5 id="modalTitle" class="mb-0 fw-bold">បន្ថែមសិស្សថ្មី</h5>
+          <button class="close-modal" onclick="closeModal()">✕</button>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">ឈ្មោះពេញ <span class="text-danger">*</span></label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-user"></i></span>
+              <input type="text" id="fName" class="form-control" placeholder="វាយឈ្មោះសិស្ស..." />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">ភេទ <span class="text-danger">*</span></label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-user-circle"></i></span>
+              <select id="fGender" class="form-select">
+                <option value="">-- ជ្រើសរើស --</option>
+                <option value="ប្រុស">ប្រុស</option>
+                <option value="ស្រី">ស្រី</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">ថ្ងៃខែឆ្នាំកំណើត</label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+              <input type="date" id="fDob" class="form-control" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">ថ្នាក់ទី <span class="text-danger">*</span></label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-layer"></i></span>
+              <select id="fGrade" class="form-select">
+                <option value="">-- ជ្រើសរើស --</option>
+                <option value="7">ថ្នាក់ទី 7</option>
+                <option value="8">ថ្នាក់ទី 8</option>
+                <option value="9">ថ្នាក់ទី 9</option>
+                <option value="10">ថ្នាក់ទី 10</option>
+                <option value="11">ថ្នាក់ទី 11</option>
+                <option value="12">ថ្នាក់ទី 12</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">កម្រិតថ្នាក់ (បន្ទប់)</label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-home-alt"></i></span>
+              <select id="fRoom" class="form-select">
+                <option value="">-- ជ្រើសរើស --</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">លេខទូរស័ព្ទ</label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-phone"></i></span>
+              <input type="text" id="fPhone" class="form-control" placeholder="0xx xxx xxx" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">ស្ថានភាពសិស្ស</label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-info-circle"></i></span>
+              <select id="fStatus" class="form-select">
+                <option value="សកម្ម">សកម្ម</option>
+                <option value="ផ្ទេរចូលដើមឆ្នាំ">ផ្ទេរចូលដើមឆ្នាំ</option>
+                <option value="ផ្ទេរចូលឆមាសទី១">ផ្ទេរចូលឆមាសទី១</option>
+                <option value="ផ្ទេរចូលឆមាសទី២">ផ្ទេរចូលឆមាសទី២</option>
+                <option value="ផ្ទេរចេញឆមាស១">ផ្ទេរចេញឆមាស១</option>
+                <option value="ផ្ទេរចេញឆមាស២">ផ្ទេរចេញឆមាស២</option>
+                <option value="ផ្ទេរចេញដើមឆ្នាំ">ផ្ទេរចេញដើមឆ្នាំ</option>
+                <option value="លុបឈ្មោះឆមាស១">លុបឈ្មោះឆមាស១</option>
+                <option value="លុបឈ្មោះឆមាស២">លុបឈ្មោះឆមាស២</option>
+                <option value="ដកបេក្ខភាពប្រឡងឆមាស១">ដកបេក្ខភាពប្រឡងឆមាស១</option>
+                <option value="ដកបេក្ខភាពប្រឡងឆមាស២">ដកបេក្ខភាពប្រឡងឆមាស២</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">ឈ្មោះគ្រូបន្ទុកថ្នាក់</label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-chalkboard"></i></span>
+              <input type="text" id="fTeacher" class="form-control" placeholder="ឈ្មោះគ្រូ..." />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">ឈ្មោះអ្នកបញ្ចូលទិន្នន័យ</label>
+            <div class="input-group input-group-merge">
+              <span class="input-group-text"><i class="bx bx-edit"></i></span>
+              <input type="text" id="fRecorder" class="form-control" placeholder="ឈ្មោះអ្នកបញ្ចូល..." />
+            </div>
+          </div>
+          <div class="col-12 mt-2">
+            <button class="btn btn-primary me-2" onclick="saveStudent()">
+              <i class="bx bx-save me-1"></i> រក្សាទុក
+            </button>
+            <button class="btn btn-outline-secondary" onclick="closeModal()">បោះបង់</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+    <!-- Confirm Delete Modal -->
+    <div class="confirm-overlay" id="confirmModal">
+      <div class="confirm-box">
+        <i class="bx bx-trash" style="font-size:48px; color:#ff3e1d; margin-bottom:16px; display:block;"></i>
+        <h5 class="fw-bold mb-2">លុបសិស្ស?</h5>
+        <p class="text-muted mb-4">តើអ្នកពិតជាចង់លុបសិស្សនេះ? ទិន្នន័យនឹងបាត់ពីអចិន្ត្រៃយ៍!</p>
+        <button class="btn btn-danger me-2" onclick="confirmDelete()">លុបចោល</button>
+        <button class="btn btn-outline-secondary" onclick="closeConfirm()">បោះបង់</button>
+      </div>
+    </div>
 
-    <script src="../assets/vendor/libs/popper/popper.js"></script>
-    <script src="../assets/vendor/js/bootstrap.js"></script>
+    <!-- Toast -->
+    <div class="toast-msg" id="toastMsg"></div>
 
-    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="assets/vendor/libs/popper/popper.js"></script>
+    <script src="assets/vendor/js/bootstrap.js"></script>
+    <script src="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="assets/vendor/js/menu.js"></script>
+    <script src="assets/js/main.js"></script>
 
-    <script src="../assets/vendor/js/menu.js"></script>
+    <script>
+      // ====== DATA ======
+      let students = JSON.parse(localStorage.getItem('students') || '[]');
+      let editingId = null;
+      let deletingId = null;
 
-    <!-- endbuild -->
+      function saveData() {
+        localStorage.setItem('students', JSON.stringify(students));
+      }
 
-    <!-- Vendors JS -->
-    <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script>
+      // ====== STATS ======
+      function updateStats() {
+        document.getElementById('statTotal').textContent = students.length;
+        document.getElementById('statActive').textContent = students.filter(s => s.status === 'សកម្ម').length;
+        document.getElementById('statMale').textContent = students.filter(s => s.gender === 'ប្រុស').length;
+        document.getElementById('statFemale').textContent = students.filter(s => s.gender === 'ស្រី').length;
+      }
 
-    <!-- Main JS -->
+      // ====== STATUS BADGE ======
+      function statusBadge(status) {
+        const colors = {
+          'សកម្ម': 'success',
+          'ផ្ទេរចេញឆមាស១': 'warning',
+          'ផ្ទេរចេញឆមាស២': 'warning',
+          'ផ្ទេរចេញដើមឆ្នាំ': 'warning',
+          'លុបឈ្មោះឆមាស១': 'danger',
+          'លុបឈ្មោះឆមាស២': 'danger',
+          'ដកបេក្ខភាពប្រឡងឆមាស១': 'secondary',
+          'ដកបេក្ខភាពប្រឡងឆមាស២': 'secondary',
+        };
+        const c = colors[status] || 'secondary';
+        return `<span class="badge bg-label-${c}">${status || '-'}</span>`;
+      }
 
-    <script src="../assets/js/main.js"></script>
+      // ====== RENDER TABLE ======
+      function renderTable() {
+        const search = document.getElementById('searchStudent').value.toLowerCase();
+        const grade = document.getElementById('filterGrade').value;
+        const gender = document.getElementById('filterGender').value;
+        const status = document.getElementById('filterStatus').value;
 
-    <!-- Page JS -->
-    <script src="../assets/js/dashboards-analytics.js"></script>
+        let filtered = students.filter(s => {
+          const matchSearch = !search ||
+            (s.name || '').toLowerCase().includes(search) ||
+            (s.phone || '').includes(search);
+          const matchGrade = !grade || s.grade === grade;
+          const matchGender = !gender || s.gender === gender;
+          const matchStatus = !status || s.status === status;
+          return matchSearch && matchGrade && matchGender && matchStatus;
+        });
 
-    <!-- Place this tag before closing body tag for github widget button. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+        const tbody = document.getElementById('studentTableBody');
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><i class="bx bx-user-x"></i>មិនមានសិស្ស<br><small class="text-muted">ចុច "បន្ថែមសិស្សថ្មី" ដើម្បីចាប់ផ្តើម</small></div></td></tr>`;
+        } else {
+          tbody.innerHTML = filtered.map((s, i) => `
+            <tr>
+              <td>${i + 1}</td>
+              <td><strong>${s.name || '-'}</strong></td>
+              <td>${s.gender || '-'}</td>
+              <td>${s.dob || '-'}</td>
+              <td>${s.grade ? 'ថ្នាក់ទី ' + s.grade : '-'}</td>
+              <td>${s.room || '-'}</td>
+              <td>${s.phone || '-'}</td>
+              <td>${statusBadge(s.status)}</td>
+              <td>${s.teacher || '-'}</td>
+              <td>${s.recorder || '-'}</td>
+              <td>
+                <button class="action-btn btn-edit" onclick="openEditModal('${s.id}')" title="កែប្រែ">
+                  <i class="bx bx-edit-alt"></i>
+                </button>
+                <button class="action-btn btn-delete" onclick="openConfirm('${s.id}')" title="លុប">
+                  <i class="bx bx-trash"></i>
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
+        updateStats();
+      }
+
+      // ====== MODAL ======
+      function openAddModal() {
+        editingId = null;
+        document.getElementById('modalTitle').textContent = 'បន្ថែមសិស្សថ្មី';
+        clearForm();
+        document.getElementById('studentModal').classList.add('active');
+      }
+
+      function openEditModal(id) {
+        const s = students.find(x => x.id === id);
+        if (!s) return;
+        editingId = id;
+        document.getElementById('modalTitle').textContent = 'កែប្រែព័ត៌មានសិស្ស';
+        document.getElementById('fName').value = s.name || '';
+        document.getElementById('fGender').value = s.gender || '';
+        document.getElementById('fDob').value = s.dob || '';
+        document.getElementById('fGrade').value = s.grade || '';
+        document.getElementById('fRoom').value = s.room || '';
+        document.getElementById('fPhone').value = s.phone || '';
+        document.getElementById('fStatus').value = s.status || 'សកម្ម';
+        document.getElementById('fTeacher').value = s.teacher || '';
+        document.getElementById('fRecorder').value = s.recorder || '';
+        document.getElementById('studentModal').classList.add('active');
+      }
+
+      function closeModal() {
+        document.getElementById('studentModal').classList.remove('active');
+        editingId = null;
+      }
+
+      function clearForm() {
+        ['fName','fGender','fDob','fGrade','fRoom','fPhone','fTeacher','fRecorder'].forEach(id => {
+          document.getElementById(id).value = '';
+        });
+        document.getElementById('fStatus').value = 'សកម្ម';
+      }
+
+      // ====== SAVE ======
+      function saveStudent() {
+        const name = document.getElementById('fName').value.trim();
+        const gender = document.getElementById('fGender').value;
+        const grade = document.getElementById('fGrade').value;
+
+        if (!name) { showToast('សូមវាយឈ្មោះសិស្ស!', true); return; }
+        if (!gender) { showToast('សូមជ្រើសរើសភេទ!', true); return; }
+        if (!grade) { showToast('សូមជ្រើសរើសថ្នាក់ទី!', true); return; }
+
+        const data = {
+          name,
+          gender,
+          grade,
+          dob: document.getElementById('fDob').value,
+          room: document.getElementById('fRoom').value,
+          phone: document.getElementById('fPhone').value.trim(),
+          status: document.getElementById('fStatus').value,
+          teacher: document.getElementById('fTeacher').value.trim(),
+          recorder: document.getElementById('fRecorder').value.trim(),
+        };
+
+        if (editingId) {
+          const idx = students.findIndex(s => s.id === editingId);
+          students[idx] = { ...students[idx], ...data };
+          showToast('កែប្រែបានជោគជ័យ! ✅');
+        } else {
+          data.id = 'id_' + Date.now();
+          data.createdAt = new Date().toISOString();
+          students.push(data);
+          showToast('បន្ថែមសិស្សបានជោគជ័យ! ✅');
+        }
+
+        saveData();
+        renderTable();
+        closeModal();
+      }
+
+      // ====== DELETE ======
+      function openConfirm(id) {
+        deletingId = id;
+        document.getElementById('confirmModal').classList.add('active');
+      }
+
+      function closeConfirm() {
+        deletingId = null;
+        document.getElementById('confirmModal').classList.remove('active');
+      }
+
+      function confirmDelete() {
+        students = students.filter(s => s.id !== deletingId);
+        saveData();
+        renderTable();
+        closeConfirm();
+        showToast('លុបបានជោគជ័យ! 🗑️');
+      }
+
+      // ====== TOAST ======
+      function showToast(msg, isError = false) {
+        const t = document.getElementById('toastMsg');
+        t.textContent = msg;
+        t.className = 'toast-msg show' + (isError ? ' error' : '');
+        setTimeout(() => { t.className = 'toast-msg'; }, 3000);
+      }
+
+      // ====== FILTER CLEAR ======
+      function clearFilters() {
+        document.getElementById('searchStudent').value = '';
+        document.getElementById('filterGrade').value = '';
+        document.getElementById('filterGender').value = '';
+        document.getElementById('filterStatus').value = '';
+        renderTable();
+      }
+
+      // ====== GLOBAL SEARCH ======
+      document.getElementById('globalSearch').addEventListener('input', function() {
+        document.getElementById('searchStudent').value = this.value;
+        renderTable();
+      });
+
+      // Close modal on overlay click
+      document.getElementById('studentModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+      });
+      document.getElementById('confirmModal').addEventListener('click', function(e) {
+        if (e.target === this) closeConfirm();
+      });
+
+      // ====== IMPORT ======
+      let importedRows = [];
+      let fileColumns = [];
+
+      const systemFields = [
+        { key: 'name',     label: 'ឈ្មោះពេញ' },
+        { key: 'gender',   label: 'ភេទ' },
+        { key: 'dob',      label: 'ថ្ងៃខែឆ្នាំកំណើត' },
+        { key: 'grade',    label: 'ថ្នាក់ទី' },
+        { key: 'room',     label: 'បន្ទប់' },
+        { key: 'phone',    label: 'លេខទូរស័ព្ទ' },
+        { key: 'status',   label: 'ស្ថានភាព' },
+        { key: 'teacher',  label: 'គ្រូបន្ទុក' },
+        { key: 'recorder', label: 'អ្នកបញ្ចូល' },
+      ];
+
+      // Auto-guess mapping by column name similarity
+      function guessMapping(col) {
+        const c = col.trim();
+        if (c === 'ឈ្មោះពេញ' || c.toLowerCase() === 'name') return 'name';
+        if (c.includes('ថ្ងៃខែ') || c.includes('កំណើត') || c.toLowerCase().includes('dob') || c.toLowerCase().includes('birth')) return 'dob';
+        if (c === 'ភេទ' || c.toLowerCase() === 'gender' || c.toLowerCase() === 'sex') return 'gender';
+        if (c === 'ថ្នាក់ទី' || c.toLowerCase() === 'grade') return 'grade';
+        if (c.includes('បន្ទប់') || c.includes('កម្រិត') || c.toLowerCase() === 'room') return 'room';
+        if (c.includes('ទូរស័ព្ទ') || c.toLowerCase().includes('phone') || c.toLowerCase().includes('tel')) return 'phone';
+        if (c.includes('ស្ថានភាព') || c.toLowerCase() === 'status') return 'status';
+        if (c.includes('គ្រូ') || c.toLowerCase().includes('teacher')) return 'teacher';
+        if (c.includes('បញ្ចូល') || c.toLowerCase().includes('recorder')) return 'recorder';
+        return '';
+      }
+
+      function handleImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        event.target.value = '';
+
+        const reader = new FileReader();
+        const isCSV = file.name.endsWith('.csv');
+
+        reader.onload = function(e) {
+          let data;
+          if (isCSV) {
+            const text = e.target.result;
+            const wb = XLSX.read(text, { type: 'string' });
+            data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+          } else {
+            const ab = e.target.result;
+            const wb = XLSX.read(ab, { type: 'array' });
+            data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+          }
+
+          if (!data || data.length < 2) {
+            showToast('File ទទេ ឬ មិនមាន data!', true); return;
+          }
+
+          fileColumns = data[0].map(c => String(c || '').trim());
+          importedRows = data.slice(1).filter(r => r.some(c => c !== undefined && c !== ''));
+
+          // Build mapping UI
+          const mapHtml = fileColumns.map((col, i) => {
+            const guessed = guessMapping(col);
+            const opts = systemFields.map(f =>
+              `<option value="${f.key}" ${guessed === f.key ? 'selected' : ''}>${f.label}</option>`
+            ).join('');
+            return `
+              <div class="col-md-4 col-6">
+                <div class="card p-2" style="font-size:13px">
+                  <div class="text-muted mb-1">📋 ${col}</div>
+                  <select class="form-select form-select-sm" id="map_${i}">
+                    <option value="">-- មិនប្រើ --</option>
+                    ${opts}
+                  </select>
+                </div>
+              </div>`;
+          }).join('');
+          document.getElementById('mappingRows').innerHTML = mapHtml;
+
+          // Preview table
+          const headHtml = `<tr>${fileColumns.map(c => `<th>${c}</th>`).join('')}</tr>`;
+          const bodyHtml = importedRows.slice(0, 5).map(row =>
+            `<tr>${fileColumns.map((_, i) => `<td>${row[i] !== undefined ? row[i] : ''}</td>`).join('')}</tr>`
+          ).join('');
+          document.getElementById('previewHead').innerHTML = headHtml;
+          document.getElementById('previewBody').innerHTML = bodyHtml;
+
+          document.getElementById('importInfo').style.display = 'block';
+          document.getElementById('importInfo').textContent = `🔍 រកឃើញ ${importedRows.length} សិស្ស — បង្ហាញ ${Math.min(5, importedRows.length)} ដំបូង`;
+          document.getElementById('importModal').classList.add('active');
+        };
+
+        if (isCSV) reader.readAsText(file, 'UTF-8');
+        else reader.readAsArrayBuffer(file);
+      }
+
+      function confirmImport() {
+        // Build mapping: colIndex -> fieldKey
+        const mapping = {};
+        fileColumns.forEach((_, i) => {
+          const val = document.getElementById('map_' + i)?.value;
+          if (val) mapping[i] = val;
+        });
+
+        if (Object.keys(mapping).length === 0) {
+          showToast('សូមផ្គូផ្គង column យ៉ាងតិច 1!', true); return;
+        }
+
+        let added = 0;
+        importedRows.forEach(row => {
+          const s = { id: 'id_' + Date.now() + '_' + Math.random(), createdAt: new Date().toISOString(), status: 'សកម្ម' };
+          Object.entries(mapping).forEach(([colIdx, field]) => {
+            let val = row[colIdx];
+            if (val !== undefined && val !== null) s[field] = String(val).trim();
+          });
+          if (s.name) { students.push(s); added++; }
+        });
+
+        saveData();
+        renderTable();
+        closeImportModal();
+        showToast(`Import បានជោគជ័យ! បន្ថែម ${added} សិស្ស ✅`);
+      }
+
+      function closeImportModal() {
+        document.getElementById('importModal').classList.remove('active');
+        importedRows = [];
+        fileColumns = [];
+      }
+
+      // ====== DOWNLOAD TEMPLATE ======
+      function downloadTemplate() {
+        const ws_data = [
+          ['ឈ្មោះពេញ','ភេទ','ថ្ងៃខែឆ្នាំកំណើត','ថ្នាក់ទី','កម្រិតថ្នាក់ (បន្ទប់)','លេខទូរស័ព្ទ','ស្ថានភាពសិស្ស','ឈ្មោះគ្រូបន្ទុកថ្នាក់','ឈ្មោះអ្នកបញ្ចូលទិន្នន័យ'],
+          ['សុខ វិទ្យា','ប្រុស','01/01/2008','10','A','012345678','សកម្ម','គ្រូ ចន្ទ','Admin'],
+          ['លី សុភា','ស្រី','15/03/2009','9','B','098765432','សកម្ម','គ្រូ ណា','Admin'],
+          ['ហេង សុខា','ប្រុស','22/07/2007','11','C','070123456','ផ្ទេរចូលឆមាសទី១','គ្រូ ដារា','Admin'],
+        ];
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(ws_data);
+        ws['!cols'] = [
+          { wch: 22 }, { wch: 8 }, { wch: 18 }, { wch: 10 },
+          { wch: 20 }, { wch: 14 }, { wch: 24 }, { wch: 22 }, { wch: 22 }
+        ];
+        XLSX.utils.book_append_sheet(wb, ws, 'បញ្ជីសិស្ស');
+        XLSX.writeFile(wb, 'student_template.xlsx');
+        showToast('Download Template បានជោគជ័យ! ✅');
+      }
+
+      document.getElementById('importModal').addEventListener('click', function(e) {
+        if (e.target === this) closeImportModal();
+      });
+
+      // ====== INIT ======
+      renderTable();
+    </script>
   </body>
 </html>
