@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>គ្រប់គ្រង Account | Admin</title>
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/vendor/fonts/boxicons.css" />
+  <link rel="stylesheet" href="assets/vendor/css/core.css" />
+  <link rel="stylesheet" href="assets/vendor/css/theme-default.css" />
+  <link rel="stylesheet" href="assets/css/demo.css" />
+  <script src="assets/vendor/js/helpers.js"></script>
+  <script src="assets/js/config.js"></script>
+  <style>
+    .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.5); z-index:9999; justify-content:center; align-items:center; }
+    .modal-overlay.active { display:flex; }
+    .modal-box { background:#fff; border-radius:12px; padding:30px; width:90%; max-width:500px; box-shadow:0 10px 40px rgba(0,0,0,.2); }
+    .modal-header-custom { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+    .close-modal { cursor:pointer; font-size:24px; color:#888; border:none; background:none; }
+    .toast-msg { position:fixed; bottom:30px; right:30px; background:#28a745; color:#fff; padding:14px 24px; border-radius:10px; font-size:15px; z-index:99999; display:none; }
+    .toast-msg.error { background:#ff3e1d; }
+    .toast-msg.show { display:block; }
+    .role-badge { padding:3px 10px; border-radius:20px; font-size:12px; font-weight:500; }
+    .role-admin { background:#e8e8ff; color:#696cff; }
+    .role-teacher { background:#e8f5e9; color:#28a745; }
+    .confirm-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.5); z-index:99998; justify-content:center; align-items:center; }
+    .confirm-overlay.active { display:flex; }
+    .confirm-box { background:#fff; border-radius:12px; padding:30px; width:90%; max-width:380px; text-align:center; }
+  </style>
+</head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+      <div class="app-brand demo">
+        <a href="index.html" class="app-brand-link">
+          <span class="app-brand-text demo menu-text fw-bold ms-2">សិស្ស</span>
+        </a>
+      </div>
+      <div class="menu-divider mt-0"></div>
+      <ul class="menu-inner py-1">
+        <li class="menu-item">
+          <a href="index.html" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-home-smile"></i>
+            <div class="text-truncate">គ្រប់គ្រងសិស្ស</div>
+          </a>
+        </li>
+        <li class="menu-item active">
+          <a href="admin.html" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-shield"></i>
+            <div class="text-truncate">គ្រប់គ្រង Account</div>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <div class="layout-page">
+      <nav class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
+        <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0 d-xl-none">
+          <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)"><i class="bx bx-menu icon-md"></i></a>
+        </div>
+        <div class="navbar-nav-right d-flex align-items-center justify-content-end">
+          <ul class="navbar-nav flex-row align-items-center ms-md-auto">
+            <li class="nav-item me-3 d-none d-md-flex align-items-center">
+              <div class="text-end">
+                <div style="font-size:13px;font-weight:600;" id="userEmail">...</div>
+                <div style="font-size:11px;color:#696cff;">👑 Admin</div>
+              </div>
+            </li>
+            <li class="nav-item me-2">
+              <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                <i class="bx bx-log-out me-1"></i>ចេញ
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">គ្រប់គ្រង Account គ្រូ</h4>
+            <button class="btn btn-primary" onclick="openAddModal()">
+              <i class="bx bx-plus me-1"></i> បន្ថែម Account គ្រូ
+            </button>
+          </div>
+
+          <div class="card">
+            <h5 class="card-header">Account ទាំងអស់</h5>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Email</th>
+                      <th>ឈ្មោះ</th>
+                      <th>ថ្នាក់បន្ទុក</th>
+                      <th>Role</th>
+                      <th>សកម្មភាព</th>
+                    </tr>
+                  </thead>
+                  <tbody id="usersTableBody">
+                    <tr><td colspan="6" class="text-center py-4 text-muted">កំពុងទាញយក...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="content-footer footer bg-footer-theme">
+          <div class="container-xxl">
+            <div class="footer-container d-flex align-items-center justify-content-between py-4">
+              <div class="text-body">© <script>document.write(new Date().getFullYear())</script>, គ្រប់គ្រងសិស្ស ❤️</div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal-box">
+    <div class="modal-header-custom">
+      <h5 id="modalTitle" class="mb-0 fw-bold">បន្ថែម Account គ្រូ</h5>
+      <button class="close-modal" onclick="closeModal()">✕</button>
+    </div>
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Email <span class="text-danger">*</span></label>
+        <div class="input-group input-group-merge">
+          <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+          <input type="email" id="fEmail" class="form-control" placeholder="teacher@school.com" />
+        </div>
+      </div>
+      <div class="col-12" id="passwordGroup">
+        <label class="form-label">Password <span class="text-danger">*</span></label>
+        <div class="input-group input-group-merge">
+          <span class="input-group-text"><i class="bx bx-lock"></i></span>
+          <input type="password" id="fPassword" class="form-control" placeholder="យ៉ាងតិច 6 តួ" />
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">ឈ្មោះ</label>
+        <div class="input-group input-group-merge">
+          <span class="input-group-text"><i class="bx bx-user"></i></span>
+          <input type="text" id="fName" class="form-control" placeholder="ឈ្មោះគ្រូ..." />
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">ថ្នាក់បន្ទុក</label>
+        <div class="input-group input-group-merge">
+          <span class="input-group-text"><i class="bx bx-chalkboard"></i></span>
+          <input type="text" id="fClass" class="form-control" placeholder="ឧ. 7A ឬ 10B..." />
+        </div>
+        <small class="text-muted">គ្រូអាច Edit/Delete សិស្សថ្នាក់នេះ</small>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Role</label>
+        <div class="input-group input-group-merge">
+          <span class="input-group-text"><i class="bx bx-shield"></i></span>
+          <select id="fRole" class="form-select">
+            <option value="teacher">គ្រូ (Teacher)</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-12 mt-2">
+        <button class="btn btn-primary me-2" onclick="saveUser()"><i class="bx bx-save me-1"></i> រក្សាទុក</button>
+        <button class="btn btn-outline-secondary" onclick="closeModal()">បោះបង់</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete -->
+<div class="confirm-overlay" id="confirmModal">
+  <div class="confirm-box">
+    <i class="bx bx-trash" style="font-size:48px;color:#ff3e1d;margin-bottom:16px;display:block;"></i>
+    <h5 class="fw-bold mb-2">លុប Account?</h5>
+    <p class="text-muted mb-4">Account នឹងត្រូវបាន disable!</p>
+    <button class="btn btn-danger me-2" onclick="confirmDelete()">លុប</button>
+    <button class="btn btn-outline-secondary" onclick="closeConfirm()">បោះបង់</button>
+  </div>
+</div>
+
+<div class="toast-msg" id="toastMsg"></div>
+
+<script src="assets/vendor/libs/jquery/jquery.js"></script>
+<script src="assets/vendor/libs/popper/popper.js"></script>
+<script src="assets/vendor/js/bootstrap.js"></script>
+<script src="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+<script src="assets/vendor/js/menu.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxRy0KTHude3zeWFL6_D7Je5Qe8dX0PSc",
+    authDomain: "seihak-school-db.firebaseapp.com",
+    databaseURL: "https://seihak-school-db-default-rtdb.firebaseio.com",
+    projectId: "seihak-school-db",
+    storageBucket: "seihak-school-db.firebasestorage.app",
+    messagingSenderId: "384692446932",
+    appId: "1:384692446932:web:1fd4a22975f9b3a2bbfd41"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+
+  let editingUid = null;
+  let deletingUid = null;
+  let allUsers = {};
+
+  // ====== AUTH CHECK - Admin only ======
+  auth.onAuthStateChanged(user => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    db.ref('users/' + user.uid).once('value').then(snap => {
+      const role = (snap.val() || {}).role;
+      if (role !== 'admin') { window.location.href = 'index.html'; return; }
+      document.getElementById('userEmail').textContent = user.email;
+      loadUsers();
+    });
+  });
+
+  function logout() { auth.signOut().then(() => window.location.href = 'login.html'); }
+
+  // ====== LOAD USERS ======
+  function loadUsers() {
+    db.ref('users').on('value', snap => {
+      allUsers = snap.val() || {};
+      renderUsers();
+    });
+  }
+
+  function renderUsers() {
+    const tbody = document.getElementById('usersTableBody');
+    const entries = Object.entries(allUsers);
+    if (!entries.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">មិនទាន់មាន Account ណា</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = entries.map(([uid, u], i) => `
+      <tr>
+        <td>${i+1}</td>
+        <td>${u.email||'-'}</td>
+        <td>${u.name||'-'}</td>
+        <td>${u.class||'-'}</td>
+        <td><span class="role-badge ${u.role==='admin'?'role-admin':'role-teacher'}">${u.role==='admin'?'👑 Admin':'👨‍🏫 គ្រូ'}</span></td>
+        <td>
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal('${uid}')"><i class="bx bx-edit-alt"></i></button>
+          <button class="btn btn-sm btn-outline-danger" onclick="openConfirm('${uid}')"><i class="bx bx-trash"></i></button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // ====== ADD/EDIT MODAL ======
+  function openAddModal() {
+    editingUid = null;
+    document.getElementById('modalTitle').textContent = 'បន្ថែម Account គ្រូ';
+    document.getElementById('fEmail').value = '';
+    document.getElementById('fPassword').value = '';
+    document.getElementById('fName').value = '';
+    document.getElementById('fClass').value = '';
+    document.getElementById('fRole').value = 'teacher';
+    document.getElementById('fEmail').disabled = false;
+    document.getElementById('passwordGroup').style.display = '';
+    document.getElementById('userModal').classList.add('active');
+  }
+
+  function openEditModal(uid) {
+    editingUid = uid;
+    const u = allUsers[uid] || {};
+    document.getElementById('modalTitle').textContent = 'កែប្រែ Account';
+    document.getElementById('fEmail').value = u.email || '';
+    document.getElementById('fEmail').disabled = true;
+    document.getElementById('fName').value = u.name || '';
+    document.getElementById('fClass').value = u.class || '';
+    document.getElementById('fRole').value = u.role || 'teacher';
+    document.getElementById('passwordGroup').style.display = 'none';
+    document.getElementById('userModal').classList.add('active');
+  }
+
+  function closeModal() { document.getElementById('userModal').classList.remove('active'); }
+
+  // ====== SAVE USER ======
+  async function saveUser() {
+    const email    = document.getElementById('fEmail').value.trim();
+    const password = document.getElementById('fPassword').value;
+    const name     = document.getElementById('fName').value.trim();
+    const cls      = document.getElementById('fClass').value.trim();
+    const role     = document.getElementById('fRole').value;
+
+    if (!editingUid && (!email || !password)) {
+      showToast('សូមបំពេញ Email និង Password!', true); return;
+    }
+    if (!editingUid && password.length < 6) {
+      showToast('Password ត្រូវមានយ៉ាងតិច 6 តួ!', true); return;
+    }
+
+    if (editingUid) {
+      // Update profile only
+      await db.ref('users/' + editingUid).update({ name, class: cls, role });
+      showToast('កែប្រែបានជោគជ័យ! ✅');
+      closeModal();
+    } else {
+      // Create new user via Firebase REST API
+      try {
+        const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAxRy0KTHude3zeWFL6_D7Je5Qe8dX0PSc`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, returnSecureToken: true })
+        });
+        const data = await res.json();
+        if (data.error) { showToast(data.error.message, true); return; }
+        const uid = data.localId;
+        await db.ref('users/' + uid).set({ email, name, class: cls, role });
+        showToast('បង្កើត Account បានជោគជ័យ! ✅');
+        closeModal();
+      } catch(e) {
+        showToast('មានបញ្ហា! ' + e.message, true);
+      }
+    }
+  }
+
+  // ====== DELETE ======
+  function openConfirm(uid) { deletingUid = uid; document.getElementById('confirmModal').classList.add('active'); }
+  function closeConfirm()   { deletingUid = null; document.getElementById('confirmModal').classList.remove('active'); }
+  function confirmDelete() {
+    db.ref('users/' + deletingUid).remove()
+      .then(() => { showToast('លុប Account រួចហើយ!'); closeConfirm(); })
+      .catch(() => showToast('មានបញ្ហា!', true));
+  }
+
+  // ====== TOAST ======
+  function showToast(msg, isError=false) {
+    const t = document.getElementById('toastMsg');
+    t.textContent = msg;
+    t.className = 'toast-msg show' + (isError?' error':'');
+    setTimeout(() => t.className='toast-msg', 3000);
+  }
+
+  document.getElementById('userModal').addEventListener('click', e => { if(e.target===document.getElementById('userModal')) closeModal(); });
+  document.getElementById('confirmModal').addEventListener('click', e => { if(e.target===document.getElementById('confirmModal')) closeConfirm(); });
+</script>
+</body>
+</html>
