@@ -137,6 +137,12 @@
                 </li>
               </ul>
             </li>
+            <li class="menu-item admin-only">
+              <a href="admin.html" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-shield"></i>
+                <div class="text-truncate">គ្រប់គ្រង Account</div>
+              </a>
+            </li>
           </ul>
         </aside>
 
@@ -156,6 +162,17 @@
                 </div>
               </div>
               <ul class="navbar-nav flex-row align-items-center ms-md-auto">
+                <li class="nav-item me-3 d-none d-md-flex align-items-center">
+                  <div class="text-end">
+                    <div style="font-size:13px;font-weight:600;color:#333;" id="userEmail">...</div>
+                    <div style="font-size:11px;color:#696cff;" id="userRole">...</div>
+                  </div>
+                </li>
+                <li class="nav-item me-2">
+                  <button class="btn btn-outline-danger btn-sm" onclick="logout()">
+                    <i class="bx bx-log-out me-1"></i>ចេញ
+                  </button>
+                </li>
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
@@ -172,12 +189,14 @@
                             </div>
                           </div>
                           <div class="flex-grow-1">
-                            <h6 class="mb-0">Admin</h6>
-                            <small class="text-muted">Administrator</small>
+                            <h6 class="mb-0" id="userEmail2">Admin</h6>
+                            <small class="text-muted" id="userRole2">Administrator</small>
                           </div>
                         </div>
                       </a>
                     </li>
+                    <li><div class="dropdown-divider"></div></li>
+                    <li><a class="dropdown-item" href="javascript:void(0);" onclick="logout()"><i class="bx bx-power-off me-2 text-danger"></i>ចេញពីប្រព័ន្ធ</a></li>
                   </ul>
                 </li>
               </ul>
@@ -189,11 +208,11 @@
               <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                 <h4 class="fw-bold mb-0">គ្រប់គ្រងសិស្ស</h4>
                 <div class="d-flex gap-2 flex-wrap">
-                  <button class="btn btn-outline-success" onclick="document.getElementById('importFile').click()">
+                  <button class="btn btn-outline-success admin-only" onclick="document.getElementById('importFile').click()">
                     <i class="bx bx-upload me-1"></i> Import Excel/CSV
                   </button>
                   <input type="file" id="importFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleImport(event)" />
-                  <button class="btn btn-outline-secondary" onclick="downloadTemplate()">
+                  <button class="btn btn-outline-secondary admin-only" onclick="downloadTemplate()">
                     <i class="bx bx-download me-1"></i> Download Template
                   </button>
                   <button class="btn btn-outline-warning" onclick="exportExcel()">
@@ -494,6 +513,7 @@
     <script src="assets/vendor/js/menu.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script>
       const firebaseConfig = {
@@ -506,21 +526,63 @@
         appId: "1:384692446932:web:1fd4a22975f9b3a2bbfd41"
       };
       firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
       const db = firebase.database();
       const studentsRef = db.ref('students');
+
+      // ====== CURRENT USER ======
+      let currentUser = null;
+      let currentRole = null;
+      let currentTeacherClass = null;
+
+      // ====== AUTH CHECK ======
+      auth.onAuthStateChanged(user => {
+        if (!user) {
+          window.location.href = 'login.html';
+          return;
+        }
+        currentUser = user;
+        db.ref('users/' + user.uid).once('value').then(snap => {
+          const userData = snap.val() || {};
+          currentRole = userData.role || 'teacher';
+          currentTeacherClass = userData.class || '';
+
+          // Update UI based on role
+          updateUIForRole();
+
+          // Load data
+          studentsRef.on('value', (snapshot) => {
+            students = [];
+            snapshot.forEach((child) => {
+              students.push({ id: child.key, ...child.val() });
+            });
+            renderTable();
+          });
+        });
+      });
+
+      function updateUIForRole() {
+        const isAdmin = currentRole === 'admin';
+        const adminBtns = document.querySelectorAll('.admin-only');
+        adminBtns.forEach(btn => btn.style.display = isAdmin ? '' : 'none');
+        const emailEl  = document.getElementById('userEmail');
+        const roleEl   = document.getElementById('userRole');
+        const email2El = document.getElementById('userEmail2');
+        const role2El  = document.getElementById('userRole2');
+        if (emailEl)  emailEl.textContent  = currentUser.email;
+        if (roleEl)   roleEl.textContent   = isAdmin ? '👑 Admin' : '👨‍🏫 គ្រូ: ' + currentTeacherClass;
+        if (email2El) email2El.textContent = currentUser.email;
+        if (role2El)  role2El.textContent  = isAdmin ? 'Administrator' : 'Teacher';
+      }
+
+      function logout() {
+        auth.signOut().then(() => window.location.href = 'login.html');
+      }
 
       // ====== DATA ======
       let students = [];
       let editingId = null;
       let deletingId = null;
-
-      studentsRef.on('value', (snapshot) => {
-        students = [];
-        snapshot.forEach((child) => {
-          students.push({ id: child.key, ...child.val() });
-        });
-        renderTable();
-      });
 
       function saveData() {}
 
@@ -569,7 +631,17 @@
         if (filtered.length === 0) {
           tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><i class="bx bx-user-x"></i>មិនមានសិស្ស<br><small class="text-muted">ចុច "បន្ថែមសិស្សថ្មី" ដើម្បីចាប់ផ្តើម</small></div></td></tr>`;
         } else {
-          tbody.innerHTML = filtered.map((s, i) => `
+          tbody.innerHTML = filtered.map((s, i) => {
+            const isAdmin = currentRole === 'admin';
+            const isOwner = currentTeacherClass && (s.room === currentTeacherClass || s.grade === currentTeacherClass);
+            const canEdit = isAdmin || isOwner;
+            const editBtn = canEdit
+              ? `<button class="action-btn btn-edit" onclick="openEditModal('${s.id}')" title="កែប្រែ"><i class="bx bx-edit-alt"></i></button>`
+              : '';
+            const deleteBtn = isAdmin
+              ? `<button class="action-btn btn-delete" onclick="openConfirm('${s.id}')" title="លុប"><i class="bx bx-trash"></i></button>`
+              : '';
+            return `
             <tr>
               <td>${i + 1}</td>
               <td><strong>${s.name || '-'}</strong></td>
@@ -581,16 +653,9 @@
               <td>${statusBadge(s.status)}</td>
               <td>${s.teacher || '-'}</td>
               <td>${s.recorder || '-'}</td>
-              <td>
-                <button class="action-btn btn-edit" onclick="openEditModal('${s.id}')" title="កែប្រែ">
-                  <i class="bx bx-edit-alt"></i>
-                </button>
-                <button class="action-btn btn-delete" onclick="openConfirm('${s.id}')" title="លុប">
-                  <i class="bx bx-trash"></i>
-                </button>
-              </td>
-            </tr>
-          `).join('');
+              <td>${editBtn}${deleteBtn}</td>
+            </tr>`;
+          }).join('');
         }
         updateStats();
       }
