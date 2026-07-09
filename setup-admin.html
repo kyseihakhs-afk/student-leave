@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Setup Admin</title>
+  <style>
+    body { font-family: sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; background:#f0f0f0; margin:0; }
+    .box { background:#fff; border-radius:12px; padding:40px; text-align:center; box-shadow:0 4px 20px rgba(0,0,0,.1); max-width:400px; }
+    h2 { color:#333; margin-bottom:20px; }
+    button { background:#696cff; color:#fff; border:none; padding:14px 32px; border-radius:8px; font-size:16px; cursor:pointer; }
+    button:hover { background:#5558e3; }
+    .result { margin-top:20px; padding:12px; border-radius:8px; font-size:14px; display:none; }
+    .success { background:#e8f5e9; color:#2e7d32; }
+    .error { background:#ffebee; color:#c62828; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>🔧 Setup Admin Role</h2>
+    <p style="color:#666;margin-bottom:24px;">ចុច button ខាងក្រោម ដើម្បី set Admin role<br>សម្រាប់ <strong>ky.seihak.hs@moeys.gov.kh</strong></p>
+    <button onclick="setupAdmin()">Set Admin Role</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyAxRy0KTHude3zeWFL6_D7Je5Qe8dX0PSc",
+      authDomain: "seihak-school-db.firebaseapp.com",
+      databaseURL: "https://seihak-school-db-default-rtdb.firebaseio.com",
+      projectId: "seihak-school-db",
+      storageBucket: "seihak-school-db.firebasestorage.app",
+      messagingSenderId: "384692446932",
+      appId: "1:384692446932:web:1fd4a22975f9b3a2bbfd41"
+    });
+
+    const db = firebase.database();
+
+    function setupAdmin() {
+      const uid = '742kLm9eWcRCVorJ66NhaexCGwk1';
+      const data = {
+        email: 'ky.seihak.hs@moeys.gov.kh',
+        name: 'Admin',
+        role: 'admin',
+        class: ''
+      };
+
+      db.ref('users/' + uid).set(data)
+        .then(() => {
+          const r = document.getElementById('result');
+          r.className = 'result success';
+          r.style.display = 'block';
+          r.innerHTML = '✅ បានជោគជ័យ! Admin role set រួចហើយ!<br><br>ឥឡូវអាចបិទ page នេះបាន!';
+        })
+        .catch(err => {
+          const r = document.getElementById('result');
+          r.className = 'result error';
+          r.style.display = 'block';
+          r.textContent = '❌ Error: ' + err.message;
+        });
+    }
+  </script>
+</body>
+</html>
