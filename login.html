@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="km">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ចូលប្រើប្រាស់ | Student Management</title>
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/vendor/fonts/boxicons.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Public Sans', sans-serif;
+      background: linear-gradient(135deg, #696cff 0%, #9b9ef9 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+    .logo-area {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo-icon {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, #696cff, #9b9ef9);
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .logo-icon i { font-size: 32px; color: #fff; }
+    .logo-area h2 { font-size: 22px; font-weight: 700; color: #333; margin-bottom: 4px; }
+    .logo-area p { font-size: 14px; color: #888; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 14px; font-weight: 500; color: #444; margin-bottom: 6px; }
+    .input-wrap { position: relative; }
+    .input-wrap i {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      font-size: 18px; color: #aaa;
+    }
+    .input-wrap input {
+      width: 100%; padding: 11px 12px 11px 40px;
+      border: 1.5px solid #e0e0e0; border-radius: 8px;
+      font-size: 14px; font-family: inherit;
+      outline: none; transition: border-color .2s;
+    }
+    .input-wrap input:focus { border-color: #696cff; }
+    .toggle-pw {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      cursor: pointer; color: #aaa; font-size: 18px;
+    }
+    .toggle-pw:hover { color: #696cff; }
+    .btn-login {
+      width: 100%; padding: 12px;
+      background: linear-gradient(135deg, #696cff, #9b9ef9);
+      color: #fff; border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: opacity .2s;
+    }
+    .btn-login:hover { opacity: 0.9; }
+    .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+    .error-msg {
+      background: #fff0f0; border: 1px solid #ffcdd2;
+      color: #c62828; padding: 10px 14px; border-radius: 8px;
+      font-size: 13px; margin-bottom: 16px; display: none;
+    }
+    .error-msg.show { display: block; }
+    .role-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 500; margin-top: 6px;
+    }
+    .role-admin { background: #e8e8ff; color: #696cff; }
+    .role-teacher { background: #e8f5e9; color: #28a745; }
+    .footer-text { text-align: center; margin-top: 20px; font-size: 12px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="logo-area">
+      <div class="logo-icon"><i class="bx bx-book-open"></i></div>
+      <h2>គ្រប់គ្រងសិស្ស</h2>
+      <p>Student Management System</p>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <div class="input-wrap">
+        <i class="bx bx-envelope"></i>
+        <input type="email" id="email" placeholder="example@school.com" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <div class="input-wrap">
+        <i class="bx bx-lock"></i>
+        <input type="password" id="password" placeholder="••••••••" />
+        <i class="bx bx-hide toggle-pw" id="togglePw"></i>
+      </div>
+    </div>
+
+    <button class="btn-login" id="btnLogin" onclick="doLogin()">
+      <i class="bx bx-log-in me-1"></i> ចូលប្រើប្រាស់
+    </button>
+
+    <div class="footer-text">© <script>document.write(new Date().getFullYear())</script> Student Management</div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAxRy0KTHude3zeWFL6_D7Je5Qe8dX0PSc",
+      authDomain: "seihak-school-db.firebaseapp.com",
+      databaseURL: "https://seihak-school-db-default-rtdb.firebaseio.com",
+      projectId: "seihak-school-db",
+      storageBucket: "seihak-school-db.firebasestorage.app",
+      messagingSenderId: "384692446932",
+      appId: "1:384692446932:web:1fd4a22975f9b3a2bbfd41"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Toggle password visibility
+    document.getElementById('togglePw').addEventListener('click', function() {
+      const pw = document.getElementById('password');
+      if (pw.type === 'password') {
+        pw.type = 'text';
+        this.className = 'bx bx-show toggle-pw';
+      } else {
+        pw.type = 'password';
+        this.className = 'bx bx-hide toggle-pw';
+      }
+    });
+
+    // Enter key
+    document.getElementById('password').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') doLogin();
+    });
+
+    // Check if already logged in
+    auth.onAuthStateChanged(user => {
+      if (user) window.location.href = 'index.html';
+    });
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+
+    function doLogin() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('btnLogin');
+
+      if (!email || !password) { showError('សូមបំពេញ Email និង Password!'); return; }
+
+      btn.disabled = true;
+      btn.textContent = 'កំពុងចូល...';
+      document.getElementById('errorMsg').classList.remove('show');
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => { window.location.href = 'index.html'; })
+        .catch(err => {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="bx bx-log-in"></i> ចូលប្រើប្រាស់';
+          const msgs = {
+            'auth/user-not-found': 'Email នេះមិនមាននៅក្នុងប្រព័ន្ធ!',
+            'auth/wrong-password': 'Password មិនត្រូវ!',
+            'auth/invalid-email': 'Email មិនត្រឹមត្រូវ!',
+            'auth/too-many-requests': 'Login ច្រើនពេក! សូមព្យាយាមម្តងទៀតក្រោយ!',
+            'auth/invalid-credential': 'Email ឬ Password មិនត្រូវ!',
+          };
+          showError(msgs[err.code] || 'មានបញ្ហា! សូមព្យាយាមម្តងទៀត');
+        });
+    }
+  </script>
+</body>
+</html>
