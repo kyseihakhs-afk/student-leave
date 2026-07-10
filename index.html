@@ -176,7 +176,7 @@
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                      <img src="assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                      <img id="profileImg" src="assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" style="object-fit:cover;width:40px;height:40px;" />
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
@@ -185,7 +185,7 @@
                         <div class="d-flex">
                           <div class="flex-shrink-0 me-3">
                             <div class="avatar avatar-online">
-                              <img src="assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                              <img id="profileImg2" src="assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" style="object-fit:cover;width:40px;height:40px;" />
                             </div>
                           </div>
                           <div class="flex-grow-1">
@@ -196,6 +196,12 @@
                       </a>
                     </li>
                     <li><div class="dropdown-divider"></div></li>
+                    <li>
+                      <a class="dropdown-item" href="javascript:void(0);" onclick="document.getElementById('photoInput').click()">
+                        <i class="bx bx-camera me-2 text-primary"></i>ប្តូររូប Profile
+                      </a>
+                      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="changePhoto(event)" />
+                    </li>
                     <li><a class="dropdown-item" href="javascript:void(0);" onclick="logout()"><i class="bx bx-power-off me-2 text-danger"></i>ចេញពីប្រព័ន្ធ</a></li>
                   </ul>
                 </li>
@@ -547,6 +553,9 @@
           currentRole = userData.role || 'teacher';
           currentTeacherClass = userData.class || '';
 
+          // Load profile photo
+          if (userData.photo) updateProfilePhoto(userData.photo);
+
           // Update UI based on role
           updateUIForRole();
 
@@ -577,6 +586,31 @@
 
       function logout() {
         auth.signOut().then(() => window.location.href = 'login.html');
+      }
+
+      // ====== PROFILE PHOTO ======
+      function changePhoto(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const photoData = e.target.result;
+          // Save to Firebase
+          db.ref('users/' + currentUser.uid + '/photo').set(photoData)
+            .then(() => {
+              updateProfilePhoto(photoData);
+              showToast('ប្តូររូប Profile បានជោគជ័យ! ✅');
+            })
+            .catch(() => showToast('មានបញ្ហា!', true));
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function updateProfilePhoto(photoData) {
+        const defaultPhoto = 'assets/img/avatars/1.png';
+        const src = photoData || defaultPhoto;
+        document.getElementById('profileImg').src = src;
+        document.getElementById('profileImg2').src = src;
       }
 
       // ====== DATA ======
